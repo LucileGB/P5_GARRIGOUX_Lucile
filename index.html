@@ -2,13 +2,14 @@
 
 <head>
   <meta charset="utf-8" />
+  <html lang="fr">
   <title>JustStreamIt</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
   <header>
     <h1>JustStreamIt</h1>
-
     <nav>
     <ul>
         <li><a href="index.html">Accueil</a></li>
@@ -20,24 +21,40 @@
   <section>
     <section>
       <h2>Meilleur film</h2>
-      <div id="best-movie"></div>
+      <div id="top-movie">En cours de chargement...
+      </div>
     </section>
 
     <section>
       <h2>Films les mieux notés</h2>
+      <input type="button" value="←"></input>
+      <div id="best-rated">
+        En cours de chargement...
+      <div>
+      <input type="button" value="→"></input>
     </section>
 
     <section>
       <h2>Les films les mieux notés hors USA</h2>
+      <div id="outside-us">
+        En cours de chargement...
+      </div>
     </section>
 
     <section>
       <h2>Les films les mieux notés de ces vingt dernières années</h2>
+      <div id="newish">
+        En cours de chargement...
+      </div>
     </section>
 
     <section>
       <h2>Les films du XXème siècle les mieux notés</h2>
+      <div id="oldies">
+        En cours de chargement...
+      </div>
     </section>
   </section>
-  <script scr="./javascript.js"></script>
+  <script async src="./index.js"></script>
+
 </body>
