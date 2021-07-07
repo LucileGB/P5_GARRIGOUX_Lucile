@@ -8,3 +8,7 @@ JustStreamIt est un site qui utilise Axios et l'API [OCMovies](https://github.co
 -  Les films les moins bien notés d'IMDB toute catégorie confondue,
 
 Il est possible d'avoir plus d'informations sur chaque film en cliquant sur sa couverture, ou de naviguer dans les listes en cliquant sur les flèches de chaque côté.
+
+## Installation
+1) Installez l'API [OCMovies](https://github.com/OpenClassrooms-Student-Center/OCMovies-API-EN-FR) dans le même dossier que ce dépôt.
+2) Lancez le serveur local de l'API selon les instructions, puis lancez index.html et patientez.
