@@ -5,6 +5,7 @@
   <html lang="fr">
   <title>JustStreamIt</title>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="index.css"/>
 </head>
 
 <body>
@@ -18,46 +19,51 @@
     </nav>
   </header>
 
-  <section>
     <section>
       <h2>Meilleur film</h2>
       <div id="top-movie">En cours de chargement...
       </div>
     </section>
 
-    <section>
+  <section class="other-movies">
       <h2>Films les mieux notés</h2>
-      <button>←</button>
+    <section>
+      <button onclick="previousPage('best-rated')">←</button>
       <div id="best-rated">
         En cours de chargement...
-      <div>
-      <button>→</button>
-    </section>
-
-    <section>
-      <h2>Les films les mieux notés hors USA</h2>
-      <div id="outside-us">
-        En cours de chargement...
       </div>
+      <button onclick="nextPage('best-rated', URL_BEST)">→</button>
     </section>
 
-    <section>
       <h2>Les films les mieux notés de ces vingt dernières années</h2>
-      <div id="newish">
-        En cours de chargement...
-      </div>
+      <section>
+        <button onclick="previousPage('newish')">←</button>
+        <div id="newish">
+          En cours de chargement...
+        </div>
+      <buttononclick="nextPage('newish', URL_NEWISH)">→</button>
     </section>
 
-    <section>
       <h2>Les films du XXème siècle les mieux notés</h2>
-      <div id="oldies">
-        En cours de chargement...
-      </div>
-    </section>
+      <section>
+        <button onclick="previousPage('oldies')">←</button>
+        <div id="oldies">
+          En cours de chargement...
+        </div>
+        <button onclick="nextPage('oldies', URL_OLDIES)">→</button>
+      </section>
+
+      <h2>Les films les moins bien notés</h2>
+      <section>
+        <button onclick="previousPage('worst')">←</button>
+        <div id="worst">
+          En cours de chargement...
+        </div>
+        <button>→</button>
+      </section>
   </section>
 
   <div id="myModal" class="modal">
-
     <!-- Modal content -->
     <div>
       <span class="close">&times;</span>
