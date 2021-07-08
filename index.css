@@ -2,6 +2,8 @@ body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
   background-color: rgba(254,233,182,1) 100%;
   margin-top: 13%;
+  display: flex;
+  flex-flow: column;
 }
 
 header {
@@ -53,49 +55,47 @@ h2 {
   text-align: center;
 }
 
-section div
+section > section
 {
     display: flex;
+    flex-wrap:wrap;
 }
 
-section section
-{
-    display: flex;
+.other-movies > section > div {
+  display: flex;
+  flex-flow: row;
 }
-
-/* Formatting specific to the "best movie" section */
-#title-top {
-  width: 50%;
+.arrow {
+  max-width: 18px;
+  text-align: center;
 }
-
-#top-movie {
-  width: 50%;
+.other-movies > section > div > p {
+  max-width: 182px;
+  margin: 1px;
 }
-
-
 /* The Modal (background) */
 .modal {
  display: none;
  position: fixed;
- vertical-align: middle;
  z-index: 1; /
- left: 50%;
- top: 0;
  width: 50%;
  height: 75%;
- overflow: auto;
+ overflow: scroll;
+ margin: auto;
  background-color: white;
 }
 
 /* Modal Content/Box */
 .modal-content {
- background-color: #fefefe;
- margin: 15% auto; /* 15% from the top and centered */
- padding: 20px;
- border: 1px solid #888;
- width: 80%; /* Could be more or less, depending on screen size */
- animation-name: animatetop;
- animation-duration: 0.4s
+  display: flex;
+  flex-flow: row;
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  animation-name: animatetop;
+  animation-duration: 0.4s
 }
 
 .mod-title {
@@ -103,7 +103,7 @@ section section
   width: auto;
 }
 
-.modal-content > p {
+.modal-content > div > p {
   text-align: left;
 }
 
@@ -130,14 +130,27 @@ section section
 }
 
 /* Format the best movie panel */
+#title-top {
+  width: 50%;
+}
 
+#top-movie {
+  width: 60%;
+  display: flex;
+}
 
-.best_title
-.mod-title
-.mod-cover
-.mod-data
-.cover-index
+#top-movie > div {
+  display: flex;
+  flex-flow: column;
+  max-width: 25%;
+}
 
-#best_cover
-#top-movie
-#btn-play
+#top-movie > div > p {
+  text-align:center;
+  margin-right: 2%;
+}
+
+#top-movie > div > h3 {
+  text-align: center;
+  font-style: italic;
+}

@@ -40,7 +40,7 @@ function formatIndex(movie) {// Formats movie cover for display on the index
   var title = movie["title"];
   var poster = movie["image_url"];
   var idMovie = movie["id"];
-  var result = `<p><input type="image" class="cover-index" src="${poster}" alt="${title} : cliquez ici pour plus d'informations !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
+  var result = `<p><input type="image" class="cover-index" src="${poster}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
   return result;
 }
 
@@ -118,7 +118,7 @@ async function showTopMovie(movieId) {//Show the best movie
       var poster = movie["image_url"];
       var idMovie = movie["id"];
       var description = movie["description"];
-      var formatted = `<div><h3>${title}</h3><p><input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer ${title}!" id="btn-play"/></p><p>${description}</p></div><div><p><input type="image" class="cover-index" src="${poster}" alt="${title} : cliquez ici pour plus d'informations !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p></div>`;
+      var formatted = `<div><h3>${title}</h3><p><input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer ${title}!" id="btn-play"/></p><p>${description}</p></div><div><p><input type="image" class="cover-index" src="${poster}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p></div>`;
       var formattedBloc = document.getElementById('top-movie');
       formattedBloc.innerHTML = formatted;
     },
