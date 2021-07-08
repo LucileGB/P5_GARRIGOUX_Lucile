@@ -47,7 +47,7 @@ function formatIndex(movie) {// Formats movie cover for display on the index
 function formatModal(cover, title, genres, year, rated, imdb_score, directors,
                     actors, duration, countries, boxOffice, summary) {
 // Format the movie informations for display on the modal
-  var result = `<h2 class="mod-title">${title}</h2><p><img class="mod-cover" img src="${cover}" alt="Poster de ${title}"/></p><div class="mod-data"><p><b>Genres : </b>${genres}</br><b>Résumé : </b>${summary}</br><b>Année : </b>${year}</br><b>Score : </b>${rated}</br><b>Score Imdb : </b>${imdb_score}</b></br><b>Réalisateur(s) : </b>${directors}</br><b>Acteurs : </b>${actors}</br><b>Durée : </b>${duration}</br><b>Pays d'origine : </b>${countries}</br><b>Box-office : </b> ${boxOffice}</p></div>`;
+  var result = `<h2 class="mod-title">${title}</h2><p><img class="mod-cover" img src="${cover}" alt="Poster de ${title}"/></p><div class="mod-data"><p><b>Genres : </b>${genres}<br><b>Résumé : </b>${summary}<br><b>Année : </b>${year}<br><b>Score : </b>${rated}<br><b>Score Imdb : </b>${imdb_score}<br><b>Réalisateur(s) : </b>${directors}<br><b>Acteurs : </b>${actors}<br><b>Durée : </b>${duration}<br><b>Pays d'origine : </b>${countries}<br><b>Box-office : </b> ${boxOffice}</p></div>`;
   return result;
 }
 
@@ -89,11 +89,6 @@ async function openModal(path) {
       closebtn.onclick = function() {// close the modal upon clicking the button
         modal.style.display = "none";
       }
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
     },
     (error) => {
       document.getElementsByClassName('modal-content').innerHTML = error;
@@ -123,7 +118,7 @@ async function showTopMovie(movieId) {//Show the best movie
       var poster = movie["image_url"];
       var idMovie = movie["id"];
       var description = movie["description"];
-      var formatted = `<div><h3>${title}</h3><p><input type="image" src="img/btn_play.jpg" alt="Cliquez ici pour streamer ${title}!" id="btn-play"/></p><p>${description}</p></div><div><p><input type="image" class="cover-index" src="${poster}" alt="${title} : cliquez ici pour plus d'informations !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p></div>`;
+      var formatted = `<div><h3>${title}</h3><p><input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer ${title}!" id="btn-play"/></p><p>${description}</p></div><div><p><input type="image" class="cover-index" src="${poster}" alt="${title} : cliquez ici pour plus d'informations !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p></div>`;
       var formattedBloc = document.getElementById('top-movie');
       formattedBloc.innerHTML = formatted;
     },
