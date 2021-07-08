@@ -103,8 +103,8 @@ section > section
   width: auto;
 }
 
-.modal-content > div > p {
-  text-align: left;
+.mod-data > p {
+  text-align: justify;
 }
 
 
