@@ -11,6 +11,20 @@ of the last displayed movie in the corresponding dataArrays list */
 let ocMoviePositionTracking = {};
 
 
+function formatIndex(movie) {// Formats movie cover for display on the index
+  var title = movie["title"];
+  var cover = movie["image_url"];
+  var idMovie = movie["id"];
+  var result = `<p><input type="image" class="cover-index" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
+  return result;
+}
+
+function ifError(error) {//Shows a warning in case of errors
+  var errorHead = document.getElementsByClassName("if-error")[0];
+  errorHead.style.display = "block";
+  errorHead.innerHTML = `Désolés, mais nous avons rencontré l'erreur suivante :<br> ${error}`;
+}
+
 function prettyList(list) {//Formats a list with a space after commas
   var listString = "";
   var listLenght = list.length;
@@ -28,32 +42,23 @@ function prettyList(list) {//Formats a list with a space after commas
   return listString;
 }
 
-
-function formatIndex(movie) {// Formats movie cover for display on the index
-  var title = movie["title"];
-  var cover = movie["image_url"];
-  var idMovie = movie["id"];
-  var result = `<p><input type="image" class="cover-index" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
-  return result;
-}
-
 function formatModal(cover, title, genres, year, rated, imdb_score, directors,
                     actors, duration, countries, boxOffice, summary) {
 // Format the movie informations for display on the modal
-  var data = { title: `<h2 class='mod-title'>${title}</h2>`,
-              cover: `<p><img class="mod-cover" img src="${cover}" alt="Poster de ${title}"/></p>`,
-              genres: `<b>Genres : </b>${genres}<br>`,
-              summary: `<b>Résumé : </b>${summary}<br>`,
-              year: `<b>Année : </b>${year}<br>`,
-              rated: `<b>Score : </b>${rated}<br>`,
-              imdb: `<b>Score Imdb : </b>${imdb_score}<br>`,
-              directors: `<b>Réalisateur(s) : </b>${directors}<br>`,
-              actors: `<b>Acteurs : </b>${actors}<br>`,
-              duration: `<b>Durée : </b>${duration}<br>`,
-              countries: `<b>Pays d'origine : </b>${countries}<br>`,
-              boxOffice: `<b>Box-office : </b> ${boxOffice}`,
+  var data = { title: title,
+              cover: cover,
+              genres: genres,
+              summary: summary,
+              year: year,
+              rated: rated,
+              imdb: imdb_score,
+              directors: directors,
+              actors: actors,
+              duration: duration,
+              countries: countries,
+              boxOffice: boxOffice,
               };
-  var template = `{{{ title }}}<div id="mod-data">{{{ cover }}}<p>{{{ genres }}} {{{ summary }}} {{{ year }}} {{{ rated }}} {{{ imdb }}}{{{ actors }}}{{{ duration }}}{{{ countries }}}{{{ boxOffice }}}</p></div>`;
+  var template =  document.getElementById('temp-modal').innerHTML;
   var result = Mustache.render(template, data);
   return result;
 }
@@ -67,7 +72,7 @@ async function pageCount(path) {// Return the last API page accessed for a categ
 
     },
     (error) => {
-       alert("Une erreur est survenue pendant le chargement de la page. Veuillez actualiser.")
+       ifError(error);
     }
   );
   return numberOfpages;
@@ -115,7 +120,7 @@ async function openModal(path) {
       }
     },
     (error) => {
-      document.getElementsByClassName('modal-content').innerHTML = error;
+      ifError(error);
     }
   );
 }
@@ -128,7 +133,7 @@ async function getTopMovie() {//Gets the best movie
         movie = result["results"][0]["id"];
       },
       (error) => {
-        movie = error;
+        ifError(error);
       }
     );
     return movie;
@@ -138,22 +143,19 @@ async function showTopMovie(movieId) {//Show the best movie
   await axios.get(`${TITLE_URL}${movieId}`).then(
     (response) => {
       var movie = response.data;
-      var title = movie["title"];
-      var cover = movie["image_url"];
-      var idMovie = movie["id"];
-      var description = movie["description"];
-      var data = {title: `<h3>${title}</h3>`,
-                  button: `<p><input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer ${title}!" id="btn-play"/></p>`,
-                  cover: `<p><input type="image" class="cover-index" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`,
-                  description: `<p>${description}</p>`,
+      var data = {title:  movie["title"],
+                  cover: movie["image_url"],
+                  idMovie: movie["id"],
+                  url: `${TITLE_URL}${movie["id"]}`,
+                  description: movie["description"]
                 };
-      var template = `<div>{{{ title }}}{{{ button }}}{{{ description }}}</div><div>{{{ cover }}}</div>`;
+      var template = document.getElementById('temp-best').innerHTML;
       var formatted = Mustache.render(template, data);
       var formattedBloc = document.getElementById('top-movie');
       formattedBloc.innerHTML = formatted;
     },
     (error) => {
-      formattedBloc.innerHTML = error;
+      ifError(error);
     }
 );
 }
@@ -171,7 +173,7 @@ async function getMovies(path, page) {// Load movies.
           listResults = result["results"];
         },
         (error) => {
-            return error;
+            ifError(error);
                 }
     );
     for (var j = 0; j < 5; j++){//Load all the movies inside a page
@@ -237,13 +239,13 @@ function onLoading() {//Loads the page, including the 70 first movies of each li
                       "worst-count": result4};
     },
     (error) => {
-      alert(`Une erreur est survenue pour la raison suivante : ${error}. Merci de recharger la page.`);
+      ifError(error);
     }
   );
   },
   (error) => {
   //NOTE : Peut-on gérer une erreur pour chaque catégorie sans avoir à C/C ?
-    alert(`Une erreur est survenue pour la raison suivante : ${error}. Merci de recharger la page.`);
+    ifError(error);
   }
   );
 
@@ -298,7 +300,7 @@ function nextPage(buttonId, url) {
         ocMoviePositionTracking[`${buttonId}-pos`][0] = newAPIPage;
       },
       (error) => {
-        alert(`Une erreur est survenue pour la raison suivante : ${error}. Merci de recharger la page.`);
+        ifError(error);
       }
     );
     }

@@ -26,11 +26,33 @@
     </nav>
   </header>
 
+  <section>
+    <div class="if-error">
+      <p>In case of error.</p>
+    </div>
+  </section>
+
     <section>
       <h2 id="title-top">Meilleur film</h2>
       <div id="top-movie">
         <p>En cours de chargement...</p>
       </div>
+      <script id="temp-best" type="x-tmpl-mustache">
+        <div>
+          <h3>{{ title }}</h3>
+          <p>
+            <input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer {{ title }}!" id="btn-play"/>
+          </p>
+          <p>
+            {{ description }}
+          </p>
+        </div>
+        <div>
+          <p>
+            <input type="image" class="cover-index" src="{{ cover }}" alt="{{ title }} - Cliquez pour en savoir plus !" id="{{ idMovie }}" onclick="openModal('{{ url }}')"/>
+          </p>
+        </div>
+      </script>
     </section>
 
   <section class="other-movies">
@@ -74,7 +96,27 @@
   <div id="myModal" class="modal">
     <!-- Modal content -->
       <span class="close">&times;</span>
-      <div id="modal-content"><p>En cours de chargement...</p></div>
+      <div id="modal-content">En cours de chargement...</div>
+      <script id="temp-modal" type="x-tmpl-mustache">
+        <h2 class='mod-title'>{{ title }}</h2>
+        <div id="mod-data">
+          <p>
+            <img class="mod-cover" img src="{{cover}}" alt="Poster de {{title}}"/>
+          </p>
+          <p>
+            <b>Genres : </b>{{ genres }}<br>
+            <b>Résumé : </b> {{ summary }}<br>
+            <b>Année : </b>{{ year }}<br>
+            <b>Score : </b>{{ rated }}<br>
+            <b>Score Imdb : </b>{{ imdb }}<br>
+            <b>Réalisateur(s) : </b>{{ directors }}<br>
+            <b>Acteurs : </b>{{ actors }}<br>
+            <b>Durée : </b>{{ duration }}<br>
+            <b>Pays d'origine : </b>{{ countries }}<br>
+            <b>Box-office : </b>{{ boxOffice }}<br>
+          </p>
+        </div>
+      </script>
   </div>
 
   <script async src="./index.js"></script>

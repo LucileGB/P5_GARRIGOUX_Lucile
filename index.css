@@ -65,14 +65,28 @@ section > section
   display: flex;
   flex-flow: row;
 }
+
 .arrow {
   max-width: 18px;
   text-align: center;
 }
+
+/* Organize movie covers and add a small margin */
 .other-movies > section > div > p {
   max-width: 182px;
   margin: 1px;
 }
+
+/* The Error header */
+.if-error {
+ display: none;
+ width: 100%;
+ height: 10%;
+ background-color: #ff3333;
+ color: white;
+ text-align: center;
+}
+
 /* The Modal (background) */
 .modal {
  display: none;
