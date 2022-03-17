@@ -117,10 +117,12 @@
 
   <div id="myModal" class="modal">
     <!-- Modal content -->
-      <span class="close">&times;</span>
       <div id="modal-content"><p>En cours de chargement...</p></div>
       <script id="moustache-modal" type="x-tmpl-mustache">
-        <h2 class='mod-title'>{{ title }}</h2>
+        <div class='mod-title'>
+          <span class="close">&times;</span> <h2>{{ title }}</h2>
+        </div>
+
         <div id="mod-data">
           <p>
             <img class="mod-cover" img src="{{cover}}" alt="Poster de {{title}}"/>

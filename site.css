@@ -1,6 +1,6 @@
 body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
-  background-color: #F5E6CA;
+  background-color: #f5f2ca;
   display: flex;
   flex-flow: column;
   color: #343F56;
@@ -33,6 +33,10 @@ header {
     display: flex;
     justify-content: space-between;
     background: #FB9300;
+    background: linear-gradient(90deg, rgba(226,212,3,1) 0%,
+                                rgba(255,166,20,1) 18%,
+                                rgba(240,229,67,1) 49%,
+                                rgba(252,219,138,1) 100%);
     color: #343F56;
     text-align: center;
     overflow: auto;
@@ -130,12 +134,15 @@ nav a:hover {
 }
 
 .h2-list {
-  background-color: #FB9300;
+  background: #FB9300;
+  background: linear-gradient(90deg, rgba(226,212,3,1) 0%,
+                              rgba(255,166,20,1) 18%,
+                              rgba(240,229,67,1) 49%,
+                              rgba(252,219,138,1) 100%);
   width: available;
   margin-left: -1%;
   margin-top: 4%;
   margin-bottom: 2%;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
 .section-list {/* Formats the movie lists, including navigation buttons */
@@ -158,13 +165,24 @@ nav a:hover {
 
 .arrow {
   display: none;
-  max-width: 18px;
-  padding: 1px;
-  margin-left: 1%;
-  margin-right: 1%;
+  width: 25px;
+  padding: 2px;
+  margin-left: 3px;
+  margin-right: 3px;
+  background-color: #F54748;
+  color: #fcdb1b;
+  border: none;
+  border-radius: 15px;
+}
+
+.arrow:hover {
   background-color: #343F56;
   color: #F54748;
-  border-radius: 2px;
+}
+
+.arrow:active {
+  background-color: #4d7380;
+  color: #F54748;
 }
 
 /* Error warning */
@@ -190,13 +208,23 @@ nav a:hover {
   width: 50%;
   height: 75%;
   overflow: scroll;
-  background-color: white;
+  background-color: #F5E6CA;
 }
 
 .mod-title {
   font-style: italic;
   color: #F54748;
   width: auto;
+  background: #FB9300;
+  background: linear-gradient(90deg, rgba(226,212,3,1) 0%,
+                              rgba(255,166,20,1) 18%,
+                              rgba(240,229,67,1) 49%,
+                              rgba(252,219,138,1) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-left: 5%;
+  padding-right: 10%;
 }
 
 .modal-content {
@@ -228,8 +256,7 @@ nav a:hover {
 
 .close {
  color: #F54748;
- float: right;
- font-size: 28px;
+ font-size: xx-large;
  font-weight: bold;
 }
 
