@@ -4,14 +4,14 @@ const URL_NEWISH = "http://localhost:8000/api/v1/titles/?year=&min_year=2000&sor
 const URL_OLDIES = "http://localhost:8000/api/v1/titles/?year=&max_year=1999&sort_by=-imdb_score";
 const URL_WORST = 'http://localhost:8000/api/v1/titles/?sort_by=imdb_score'
 
-// Stock the loaded movie lists
+// Stocks the loaded movie lists
 let dataArrays = {};
-/* For each category, Stocks the current API page reached and the index
-of the last displayed movie in the corresponding dataArrays list */
+/* For each category, stocks the current API page reached and the index
+of the last displayed movie */
 let ocMoviePositionTracking = {};
 
 
-function formatIndex(movie) {// Formats movie cover for display on the index
+function formatMovieCover(movie) {// Formats movie covers for display on the index
   var title = movie["title"];
   var cover = movie["image_url"];
   var idMovie = movie["id"];
@@ -19,10 +19,15 @@ function formatIndex(movie) {// Formats movie cover for display on the index
   return result;
 }
 
-function ifError(error) {//Shows a warning in case of errors
+function ifError(error) {//Shows an error message and hides the rest of the page
   var errorHead = document.getElementsByClassName("if-error")[0];
+  var movieList = document.getElementsByClassName("movies-lists")[0];
+  var bestMovie = document.getElementsByClassName("best-movie-section")[0];
+
   errorHead.style.display = "block";
   errorHead.innerHTML = `Désolés, mais nous avons rencontré l'erreur suivante :<br> ${error}`;
+  movieList.style.display = "none";
+  bestMovie.style.display = "none";
 }
 
 function prettyList(list) {//Formats a list with a space after commas
@@ -44,7 +49,7 @@ function prettyList(list) {//Formats a list with a space after commas
 
 function formatModal(cover, title, genres, year, rated, imdb_score, directors,
                     actors, duration, countries, boxOffice, summary) {
-// Format the movie informations for display on the modal
+// Formats the movie informations for display on the modal
   var data = { title: title,
               cover: cover,
               genres: genres,
@@ -58,12 +63,12 @@ function formatModal(cover, title, genres, year, rated, imdb_score, directors,
               countries: countries,
               boxOffice: boxOffice,
               };
-  var template =  document.getElementById('temp-modal').innerHTML;
+  var template =  document.getElementById('moustache-modal').innerHTML;
   var result = Mustache.render(template, data);
   return result;
 }
 
-async function pageCount(path) {// Return the last API page accessed for a category
+async function pageCount(path) {// Returns the last API page accessed for a category
   var numberOfpages;
   await axios.get(path).then(
     (response) => {
@@ -81,7 +86,7 @@ async function pageCount(path) {// Return the last API page accessed for a categ
 
 
 async function openModal(path) {
-// Opens the modal with the necessary informations, when available.
+// Opens the modal with the available informations.
   await axios.get(path).then(
     (response) => {
       var result = response.data;
@@ -112,10 +117,12 @@ async function openModal(path) {
                       actors, duration, countries, worldwide, description];
       var modal = document.getElementById("myModal");
       var innerModal = document.getElementById('modal-content');
-      var closebtn = document.getElementsByClassName("close")[0];
       innerModal.innerHTML = formatModal(...listInfo);
-      modal.style.display = "block"; //opens the modal
-      closebtn.onclick = function() {// close the modal upon clicking the button
+
+      var closebtn = document.getElementsByClassName("close")[0];
+      modal.style.display = "flex";
+      window.scrollTo(0, 0);
+      closebtn.onclick = function() {
         modal.style.display = "none";
       }
     },
@@ -125,6 +132,7 @@ async function openModal(path) {
   );
 }
 
+/* API-related functions */
 async function getTopMovie() {//Gets the best movie
   var movie = ""
     await axios.get(URL_BEST).then(
@@ -149,10 +157,11 @@ async function showTopMovie(movieId) {//Show the best movie
                   url: `${TITLE_URL}${movie["id"]}`,
                   description: movie["description"]
                 };
-      var template = document.getElementById('temp-best').innerHTML;
+      var template = document.getElementById('moustache-best').innerHTML;
+      var toFormats = document.getElementById('best-desc');
       var formatted = Mustache.render(template, data);
-      var formattedBloc = document.getElementById('top-movie');
-      formattedBloc.innerHTML = formatted;
+
+      toFormat.innerHTML = formatted;
     },
     (error) => {
       ifError(error);
@@ -160,7 +169,7 @@ async function showTopMovie(movieId) {//Show the best movie
 );
 }
 
-async function getMovies(path, page) {// Load movies.
+async function getMovies(path, page) {// Loads movies.
   var listMovies = [];
   var listResults = "";
   var startPage = page;
@@ -176,8 +185,9 @@ async function getMovies(path, page) {// Load movies.
             ifError(error);
                 }
     );
-    for (var j = 0; j < 5; j++){//Load all the movies inside a page
-      if (listResults[j] == undefined) {//... While avoiding movies already loaded, if starting mid-page
+    for (var j = 0; j < 5; j++){//Loads all the movies inside a page
+      if (listResults[j] == undefined) {
+        //... While avoiding movies already loaded, if starting mid-page
         continue;
       } else {
       listMovies.push({'title': listResults[j]["title"],
@@ -198,12 +208,12 @@ function showMovies(list, div) {//Displays movies to the user
 
   if (l < 7) {
     for (var i = 0; i < l; i++) {
-      movieDesc = formatIndex(list[i]);
+      movieDesc = formatMovieCover(list[i]);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   } else {
     for (var i = 0; i < 7; i++) {
-      movieDesc = formatIndex(list[i]);
+      movieDesc = formatMovieCover(list[i]);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   }
@@ -223,9 +233,12 @@ function onLoading() {//Loads the page, including the 70 first movies of each li
                   "newish": result3,
                   "oldies": result4,
                   "worst": result5};
+    var arrows = document.getElementsByClassName("arrow");
+    for (var arrow of arrows) {
+      arrow.style.display = "block";
+    };
 
-    /* We save the current API page, and the index of the last loaded movie
-    which is in the dataArrays list *///
+    /* Saves the current API page, and the index of the last loaded movie */
     Promise.all([pageCount(TITLE_URL), pageCount(URL_NEWISH), pageCount(URL_OLDIES),
                 pageCount(URL_WORST)])
     .then(([result1, result2, result3, result4]) => {
@@ -244,14 +257,12 @@ function onLoading() {//Loads the page, including the 70 first movies of each li
   );
   },
   (error) => {
-  //NOTE : Peut-on gérer une erreur pour chaque catégorie sans avoir à C/C ?
     ifError(error);
   }
   );
-
 }
 
-function previousPage(buttonId) {//Load previous page
+function previousPage(buttonId) {//Loads previous page
   var lastLoadedIndex = ocMoviePositionTracking[`${buttonId}-pos`][1];
 
   if (lastLoadedIndex == 6) {
@@ -263,7 +274,7 @@ function previousPage(buttonId) {//Load previous page
   }
 }
 
-function loadList(list, movieIndex) {//Load a list for nextPage
+function loadList(list, movieIndex) {//Loads a list for nextPage
   var result = [];
   var start = movieIndex += 1;
   for (var i = 0; i < 7; i++) {
@@ -280,21 +291,21 @@ function nextPage(buttonId, url) {
   var listLength = dataArrays[buttonId].length;
   var toLoad = [];
 
-  if (lastAPIPage == totalPages) {// If we reached the end, doesn't change
+  if (lastAPIPage == totalPages) {// If we reached the end, does nothing
     return 0;
   } else {// Loads the next movies in the global
     toLoad = loadList(buttonId, lastLoadedIndex);
     showMovies(toLoad, buttonId);
 
-//    if (lastLoadedIndex > (listLength -= 54) && lastLoadedIndex < (listLength -= 10))
     if (lastLoadedIndex > (listLength -= 10))
     {//Loads new movies if we're nearing the end of the loaded list
       Promise.all([getMovies(url, lastAPIPage)])
       .then(([result1]) => {
         dataArrays[buttonId] = dataArrays[buttonId].concat(result1);
 
-        /* We update the new list values. Should we decide to use a number other than 70
-        for the number of loaded movies, we'll have to use Math.floor and adjust page count. */
+        /* Updates the new list values. Should we decide to use a number other
+        than 70 per batch of loaded movies, we'll have to use Math.floor
+        and adjust page count. */
         var newListLength = dataArrays[buttonId].length;
         var newAPIPage = newListLength /= 5;
         ocMoviePositionTracking[`${buttonId}-pos`][0] = newAPIPage;
@@ -306,7 +317,7 @@ function nextPage(buttonId, url) {
     }
   }
 
-//Updating the last loaded movie index
+//Updates the last loaded movie index
   ocMoviePositionTracking[`${buttonId}-pos`][1] = lastLoadedIndex + toLoad.length;
 }
 
