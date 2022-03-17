@@ -23,28 +23,27 @@ h2 {
 
 /* Header and specific header component */
 header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 20%;
-    width: 100%;
-    padding-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    background: #FB9300;
-    background: linear-gradient(90deg, rgba(226,212,3,1) 0%,
-                                rgba(255,166,20,1) 18%,
-                                rgba(240,229,67,1) 49%,
-                                rgba(252,219,138,1) 100%);
-    color: #343F56;
-    text-align: center;
-    overflow: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  width: 100%;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  background: #FB9300;
+  background: linear-gradient(90deg, rgba(226,212,3,1) 0%,
+                              rgba(255,166,20,1) 18%,
+                              rgba(240,229,67,1) 49%,
+                              rgba(252,219,138,1) 100%);
+  color: #343F56;
+  text-align: center;
+  overflow: auto;
 }
 
 header img {
   height: 100%;
-;
 }
 
 .title-bloc > p {
@@ -87,7 +86,6 @@ nav a:hover {
   margin: auto;
   width: 100%;
 }
-
 
 #title-best {
   color: #F54748;
@@ -146,8 +144,8 @@ nav a:hover {
 }
 
 .section-list {/* Formats the movie lists, including navigation buttons */
-    display: flex;
-    flex-flow: row;
+  display: flex;
+  flex-flow: row;
 }
 
 .section-list > div {/* Formats the movie lists in themselves */
@@ -255,16 +253,16 @@ nav a:hover {
 }
 
 .close {
- color: #F54748;
- font-size: xx-large;
- font-weight: bold;
+  color: #F54748;
+  font-size: xx-large;
+  font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
- color: #343F56;
- text-decoration: none;
- cursor: pointer;
+  color: #343F56;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* Moral Animation */
@@ -277,7 +275,6 @@ nav a:hover {
 .categories {
   display: flex;
   flex-flow: column;
-
 }
 
 .categories h2 {

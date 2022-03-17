@@ -11,13 +11,17 @@ of the last displayed movie */
 let ocMoviePositionTracking = {};
 
 
+/* GENERAL UTILITIES FUNCTIONS */
+
+
 function formatMovieCover(movie) {// Formats movie covers for display on the index
   var title = movie["title"];
   var cover = movie["image_url"];
   var idMovie = movie["id"];
-  var result = `<p><input type="image" class="cover-index" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
+  var result = `<p><input type="image" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
   return result;
 }
+
 
 function ifError(error) {//Shows an error message and hides the rest of the page
   var errorHead = document.getElementsByClassName("if-error")[0];
@@ -158,7 +162,7 @@ async function showTopMovie(movieId) {//Show the best movie
                   description: movie["description"]
                 };
       var template = document.getElementById('moustache-best').innerHTML;
-      var toFormats = document.getElementById('best-desc');
+      var toFormat = document.getElementById('best-desc');
       var formatted = Mustache.render(template, data);
 
       toFormat.innerHTML = formatted;
