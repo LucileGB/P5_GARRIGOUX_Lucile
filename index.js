@@ -12,17 +12,6 @@ let ocMoviePositionTracking = {};
 
 
 /* GENERAL UTILITIES FUNCTIONS */
-
-
-function formatMovieCover(movie) {// Formats movie covers for display on the index
-  var title = movie["title"];
-  var cover = movie["image_url"];
-  var idMovie = movie["id"];
-  var result = `<p><input type="image" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
-  return result;
-}
-
-
 function ifError(error) {//Shows an error message and hides the rest of the page
   var errorHead = document.getElementsByClassName("if-error")[0];
   var movieList = document.getElementsByClassName("movies-lists")[0];
@@ -34,22 +23,22 @@ function ifError(error) {//Shows an error message and hides the rest of the page
   bestMovie.style.display = "none";
 }
 
+
 function prettyList(list) {//Formats a list with a space after commas
-  var listString = "";
-  var listLenght = list.length;
+  var finalString = "";
   if (list.length == 1) {
     return list;
   }
-  for (var i = 0; i < listLenght; i++) {
-    var item = list[i];
-    if (i == 0) {
-      listString = listString + item;
+  for (item of list) {
+    if (item == list[0]) {
+      finalString = finalString + item;
     } else {
-      listString = listString.concat(", ", item);
+      finalString = finalString.concat(", ", item);
     }
   }
-  return listString;
+  return finalString;
 }
+
 
 function formatModal(cover, title, genres, year, rated, imdb_score, directors,
                     actors, duration, countries, boxOffice, summary) {
@@ -72,23 +61,22 @@ function formatModal(cover, title, genres, year, rated, imdb_score, directors,
   return result;
 }
 
-async function pageCount(path) {// Returns the last API page accessed for a category
-  var numberOfpages;
-  await axios.get(path).then(
-    (response) => {
-      var result = response.data;
-      numberOfpages = Math.ceil(result["count"] /= 5);
 
-    },
-    (error) => {
-       ifError(error);
-    }
-  );
-  return numberOfpages;
+function formatCoverIndex(movie) {// Formats movie covers for display on the index
+  var title = movie["title"];
+  var cover = movie["image_url"];
+  var idMovie = movie["id"];
+
+  if (typeof cover != "string") {
+    cover = "img/unavailable.jpg"
+  }
+
+  var result = `<p><input type="image" src="${cover}" alt="${title} - Cliquez pour en savoir plus !" id="${idMovie}" onclick="openModal('${TITLE_URL}${idMovie}')"/></p>`;
+  return result;
 }
 
 
-
+/* MODAL-SPECIFIC FUNCTION */
 async function openModal(path) {
 // Opens the modal with the available informations.
   await axios.get(path).then(
@@ -114,8 +102,9 @@ async function openModal(path) {
         description = "Aucun résumé.";
       }
       if (typeof cover != "string") {
-        cover = "Aucune image disponible.";
+        cover = "img/unavailable.jpg";
       }
+
       var listInfo = [cover, result["title"], genres,
                       result["year"], rated, result["imdb_score"], directors,
                       actors, duration, countries, worldwide, description];
@@ -123,18 +112,19 @@ async function openModal(path) {
       var innerModal = document.getElementById('modal-content');
       innerModal.innerHTML = formatModal(...listInfo);
 
-      var closebtn = document.getElementsByClassName("close")[0];
       modal.style.display = "flex";
-      window.scrollTo(0, 0);
-      closebtn.onclick = function() {
+      var closeButton = document.getElementsByClassName("close")[0];
+      closeButton.onclick = function() {
         modal.style.display = "none";
-      }
+      };
+      window.scrollTo(0, 0);
     },
     (error) => {
       ifError(error);
     }
   );
 }
+
 
 /* API-related functions */
 async function getTopMovie() {//Gets the best movie
@@ -204,35 +194,54 @@ async function getMovies(path, page) {// Loads movies.
   return listMovies;
 }
 
-function showMovies(list, div) {//Displays movies to the user
-  var l = list.length;
+
+async function pageCount(path) {// Returns the last API page accessed for a category
+  var numberOfpages;
+  await axios.get(path).then(
+    (response) => {
+      var result = response.data;
+      numberOfpages = Math.ceil(result["count"] /= 5);
+
+    },
+    (error) => {
+       ifError(error);
+    }
+  );
+  return numberOfpages;
+}
+
+
+function displayMovies(list, div) {//Displays movies to the user
+  var length = list.length;
   var movieDesc = "";
   var futureInner = "";
   var block = document.getElementById(div);
 
-  if (l < 7) {
-    for (var i = 0; i < l; i++) {
-      movieDesc = formatMovieCover(list[i]);
+  if (length < 7) {
+    for (var i = 0; i < length; i++) {
+      movieDesc = formatCoverIndex(list[i]);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   } else {
     for (var i = 0; i < 7; i++) {
-      movieDesc = formatMovieCover(list[i]);
+      movieDesc = formatCoverIndex(list[i]);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   }
   block.innerHTML = futureInner;
 }
 
+
+/* PAGE INTERACTIONS */
 function onLoading() {//Loads the page, including the 70 first movies of each list
   Promise.all([getTopMovie(), getMovies(URL_BEST, 0), getMovies(URL_NEWISH, 0),
               getMovies(URL_OLDIES, 0), getMovies(URL_WORST, 0)])
   .then(([result1, result2, result3, result4, result5]) => {
     showTopMovie(result1);
-    showMovies(result2, "best-rated");
-    showMovies(result3, "newish");
-    showMovies(result4, "oldies");
-    showMovies(result5, "worst");
+    displayMovies(result2, "best-rated");
+    displayMovies(result3, "newish");
+    displayMovies(result4, "oldies");
+    displayMovies(result5, "worst");
     dataArrays = {"best-rated": result2,
                   "newish": result3,
                   "oldies": result4,
@@ -273,7 +282,7 @@ function previousPage(buttonId) {//Loads previous page
     return 0;
   } else {
     var toLoad = loadList(buttonId, lastLoadedIndex -= 14);
-    showMovies(toLoad, buttonId);
+    displayMovies(toLoad, buttonId);
     ocMoviePositionTracking[`${buttonId}-pos`][1] = lastLoadedIndex += 7;
   }
 }
@@ -299,7 +308,7 @@ function nextPage(buttonId, url) {
     return 0;
   } else {// Loads the next movies in the global
     toLoad = loadList(buttonId, lastLoadedIndex);
-    showMovies(toLoad, buttonId);
+    displayMovies(toLoad, buttonId);
 
     if (lastLoadedIndex > (listLength -= 10))
     {//Loads new movies if we're nearing the end of the loaded list
