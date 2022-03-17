@@ -1,7 +1,6 @@
 body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
-  background-color: rgba(254,233,182,1) 100%;
-  margin-top: 13%;
+  background-color: #F7F7F7;
   display: flex;
   flex-flow: column;
 }
@@ -10,40 +9,62 @@ header {
     position: absolute;
     top: 0;
     left: 0;
-    margin: 0;
-    margin-left: 0;
-    width: 100%;
+    right: 0;
     height: 20%;
-    background: rgb(226,212,3);
-    background: linear-gradient(90deg, rgba(226,212,3,1) 0%,
-                                rgba(255,166,20,1) 18%,
-                                rgba(240,229,67,1) 49%,
-                                rgba(252,219,138,1) 100%);
+    padding-bottom: 10px;
     display: flex;
+    justify-content: space-between;
+    background: #FF7800;
+    color: #F7F7F7;
+    text-align: center;
 }
 
-header > figure > img {
+header img {
   height: 100%;
 }
 
-.logo  {
-  height: 80%;
-  position: relative;
-  left: 0%
-}
-
-h1, p {
-  text-align: center;
-  height: 20%;
-}
-
-.slogan {
+.title-bloc > p {
+  font-size: small;
+  font-weight: lighter;
   font-style: italic;
+}
+
+nav {
+  margin-right: 2%;
+  text-align: right;
+  font-weight: bold;
+  font-size: large;
+}
+
+nav li {
+  list-style: none;
+  margin-bottom: 15%;
+}
+
+nav a:link {
+  color: #FFE300;
+  text-decoration: none;
+}
+
+nav a:visited {
+  color: #FFBC97;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: #F7F7F7;
+}
+
+h1 {
+  font-size: 300%;
+  font-weight: lighter;
+  color: #FFE300;
+  margin-bottom: 0;
 }
 
 h2 {
-  font-family: Helvetica, Arial, Verdana, sans-serif;
-  font-style: italic;
+  font-weight: lighter;
   left:0%;
   margin-left: -10%;
   width: 100%;

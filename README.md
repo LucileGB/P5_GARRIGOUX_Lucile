@@ -21,6 +21,6 @@ However, **you will need to launch its server before each use of the website** (
 Then, just **open *index.html*** in the navigator of your choice.
 
 ## Credit
--  Logo by [OpenClassrooms](openclassrooms.com/).
--  Play button taken from [IStockPhoto](istockphoto.com).
--  Colour palette taken from [Color Hunt](https://colorhunt.co/palette/f7f7f7ffb72bffe61bb5fe83).
+-  Logo from [OpenClassrooms](openclassrooms.com/).
+-  Play button from [IStockPhoto](istockphoto.com).
+-  Colour palette from [Color Hunt](https://colorhunt.co/palette/f7f7f7ffb72bffe61bb5fe83).
