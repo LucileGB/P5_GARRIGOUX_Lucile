@@ -24,22 +24,6 @@ function ifError(error) {//Shows an error message and hides the rest of the page
 }
 
 
-function prettyList(list) {//Formats a list with a space after commas
-  var finalString = "";
-  if (list.length == 1) {
-    return list;
-  }
-  for (item of list) {
-    if (item == list[0]) {
-      finalString = finalString + item;
-    } else {
-      finalString = finalString.concat(", ", item);
-    }
-  }
-  return finalString;
-}
-
-
 function formatModal(cover, title, genres, year, rated, imdb_score, directors,
                     actors, duration, countries, boxOffice, summary) {
 // Formats the movie informations for display on the modal
@@ -76,7 +60,222 @@ function formatCoverIndex(movie) {// Formats movie covers for display on the ind
 }
 
 
-/* MODAL-SPECIFIC FUNCTION */
+function loadList(list, movieIndex) {//Loads a list for nextPage
+  var result = [];
+  var start = movieIndex += 1;
+  for (var i = 0; i < 7; i++) {
+    result.push(dataArrays[list][start]);
+    start++;
+  }
+  return result;
+}
+
+
+function prettyList(list) {//Formats a list with a space after commas
+  var finalString = "";
+  if (list.length == 1) {
+    return list;
+  }
+  for (item of list) {
+    if (item == list[0]) {
+      finalString = finalString + item;
+    } else {
+      finalString = finalString.concat(", ", item);
+    }
+  }
+  return finalString;
+}
+
+
+function displayMovies(list, div) {//Displays movies to the user
+  var length = list.length;
+  var movieDesc = "";
+  var futureInner = "";
+  var block = document.getElementById(div);
+
+  if (length < 7) {
+    for (var i = 0; i < length; i++) {
+      movieDesc = formatCoverIndex(list[i]);
+      futureInner = futureInner.concat(" ", movieDesc);
+    }
+  } else {
+    for (var i = 0; i < 7; i++) {
+      movieDesc = formatCoverIndex(list[i]);
+      futureInner = futureInner.concat(" ", movieDesc);
+    }
+  }
+  block.innerHTML = futureInner;
+}
+
+
+/* API-related functions */
+async function displayBest(movieId) {//Show the best movie
+  await axios.get(`${TITLE_URL}${movieId}`).then(
+    (response) => {
+      var movie = response.data;
+      var data = {title:  movie["title"],
+                  cover: movie["image_url"],
+                  idMovie: movie["id"],
+                  url: `${TITLE_URL}${movie["id"]}`,
+                  description: movie["description"]
+                };
+      var template = document.getElementById('moustache-best').innerHTML;
+      var toFormat = document.getElementById('best-desc');
+      var formatted = Mustache.render(template, data);
+
+      toFormat.innerHTML = formatted;
+    },
+    (error) => {
+      ifError(error);
+    }
+);
+}
+
+
+async function getMovies(path, page) {// Loads movies.
+  var listMovies = [];
+  var listResults = "";
+  var startPage = page;
+  for (var i = 0; i < 14; i++) {
+    startPage ++;
+    var currentpath = `${path}&page=${startPage}`;
+    await axios.get(currentpath).then(
+        (response) => {
+          var result = response.data;
+          listResults = result["results"];
+        },
+        (error) => {
+            ifError(error);
+                }
+    );
+    for (var j = 0; j < 5; j++){//Loads all the movies inside a page
+      if (listResults[j] == undefined) {
+        //... While avoiding movies already loaded, if starting mid-page
+        continue;
+      } else {
+      listMovies.push({'title': listResults[j]["title"],
+                      'image_url': listResults[j]["image_url"],
+                    'id': listResults[j]["id"]}
+                  );
+      }
+    }
+  }
+  return listMovies;
+}
+
+
+async function getTopMovie() {//Gets the best movie
+  var movie = ""
+    await axios.get(URL_BEST).then(
+      (response) => {
+        var result = response.data;
+        movie = result["results"][0]["id"];
+      },
+      (error) => {
+        ifError(error);
+      }
+    );
+    return movie;
+}
+
+
+async function pageCount(path) {// Returns the last API page accessed for a category
+  var numberOfpages;
+  await axios.get(path).then(
+    (response) => {
+      var result = response.data;
+      numberOfpages = Math.ceil(result["count"] /= 5);
+
+    },
+    (error) => {
+       ifError(error);
+    }
+  );
+  return numberOfpages;
+}
+
+
+/* PAGE INTERACTIONS */
+function nextPage(buttonId, url) {
+  var totalPages = ocMoviePositionTracking[`${buttonId}-count`];
+  var lastAPIPage = ocMoviePositionTracking[`${buttonId}-pos`][0];
+  var lastLoadedIndex = ocMoviePositionTracking[`${buttonId}-pos`][1];
+  var listLength = dataArrays[buttonId].length;
+  var toLoad = [];
+
+  if (lastAPIPage == totalPages) {// If we reached the end, does nothing
+    return 0;
+  } else {// Loads the next movies in the global
+    toLoad = loadList(buttonId, lastLoadedIndex);
+    displayMovies(toLoad, buttonId);
+
+    if (lastLoadedIndex > (listLength -= 10))
+    {//Loads new movies if we're nearing the end of the loaded list
+      Promise.all([getMovies(url, lastAPIPage)])
+      .then(([result1]) => {
+        dataArrays[buttonId] = dataArrays[buttonId].concat(result1);
+
+        /* Updates the new list values. Should we decide to use a number other
+        than 70 per batch of loaded movies, we'll have to use Math.floor
+        and adjust page count. */
+        var newListLength = dataArrays[buttonId].length;
+        var newAPIPage = newListLength /= 5;
+        ocMoviePositionTracking[`${buttonId}-pos`][0] = newAPIPage;
+      },
+      (error) => {
+        ifError(error);
+      }
+    );
+    }
+  }
+//Updates the last loaded movie index
+  ocMoviePositionTracking[`${buttonId}-pos`][1] = lastLoadedIndex + toLoad.length;
+}
+
+
+function onLoading() {//Loads the page, including the 70 first movies of each list
+  Promise.all([getTopMovie(), getMovies(URL_BEST, 0), getMovies(URL_NEWISH, 0),
+              getMovies(URL_OLDIES, 0), getMovies(URL_WORST, 0)])
+  .then(([result1, result2, result3, result4, result5]) => {
+    displayBest(result1);
+    displayMovies(result2, "best-rated");
+    displayMovies(result3, "newish");
+    displayMovies(result4, "oldies");
+    displayMovies(result5, "worst");
+    dataArrays = {"best-rated": result2,
+                  "newish": result3,
+                  "oldies": result4,
+                  "worst": result5};
+    var arrows = document.getElementsByClassName("arrow");
+    for (var arrow of arrows) {
+      arrow.style.display = "block";
+    };
+
+    /* Saves the current API page, and the index of the last loaded movie */
+    Promise.all([pageCount(TITLE_URL), pageCount(URL_NEWISH), pageCount(URL_OLDIES),
+                pageCount(URL_WORST)])
+    .then(([result1, result2, result3, result4]) => {
+      ocMoviePositionTracking = {"best-rated-pos": [14, 6],
+                      "newish-pos": [14, 6],
+                      "oldies-pos": [14, 6],
+                      "worst-pos": [14, 6],
+                      "best-rated-count": result1,
+                      "newish-count": result2,
+                      "oldies-count": result3,
+                      "worst-count": result4};
+    },
+    (error) => {
+      ifError(error);
+    }
+  );
+  },
+  (error) => {
+    ifError(error);
+  }
+  );
+}
+
+
 async function openModal(path) {
 // Opens the modal with the available informations.
   await axios.get(path).then(
@@ -126,155 +325,6 @@ async function openModal(path) {
 }
 
 
-/* API-related functions */
-async function getTopMovie() {//Gets the best movie
-  var movie = ""
-    await axios.get(URL_BEST).then(
-      (response) => {
-        var result = response.data;
-        movie = result["results"][0]["id"];
-      },
-      (error) => {
-        ifError(error);
-      }
-    );
-    return movie;
-}
-
-async function showTopMovie(movieId) {//Show the best movie
-  await axios.get(`${TITLE_URL}${movieId}`).then(
-    (response) => {
-      var movie = response.data;
-      var data = {title:  movie["title"],
-                  cover: movie["image_url"],
-                  idMovie: movie["id"],
-                  url: `${TITLE_URL}${movie["id"]}`,
-                  description: movie["description"]
-                };
-      var template = document.getElementById('moustache-best').innerHTML;
-      var toFormat = document.getElementById('best-desc');
-      var formatted = Mustache.render(template, data);
-
-      toFormat.innerHTML = formatted;
-    },
-    (error) => {
-      ifError(error);
-    }
-);
-}
-
-async function getMovies(path, page) {// Loads movies.
-  var listMovies = [];
-  var listResults = "";
-  var startPage = page;
-  for (var i = 0; i < 14; i++) {
-    startPage ++;
-    var currentpath = `${path}&page=${startPage}`;
-    await axios.get(currentpath).then(
-        (response) => {
-          var result = response.data;
-          listResults = result["results"];
-        },
-        (error) => {
-            ifError(error);
-                }
-    );
-    for (var j = 0; j < 5; j++){//Loads all the movies inside a page
-      if (listResults[j] == undefined) {
-        //... While avoiding movies already loaded, if starting mid-page
-        continue;
-      } else {
-      listMovies.push({'title': listResults[j]["title"],
-                      'image_url': listResults[j]["image_url"],
-                    'id': listResults[j]["id"]}
-                  );
-      }
-    }
-  }
-  return listMovies;
-}
-
-
-async function pageCount(path) {// Returns the last API page accessed for a category
-  var numberOfpages;
-  await axios.get(path).then(
-    (response) => {
-      var result = response.data;
-      numberOfpages = Math.ceil(result["count"] /= 5);
-
-    },
-    (error) => {
-       ifError(error);
-    }
-  );
-  return numberOfpages;
-}
-
-
-function displayMovies(list, div) {//Displays movies to the user
-  var length = list.length;
-  var movieDesc = "";
-  var futureInner = "";
-  var block = document.getElementById(div);
-
-  if (length < 7) {
-    for (var i = 0; i < length; i++) {
-      movieDesc = formatCoverIndex(list[i]);
-      futureInner = futureInner.concat(" ", movieDesc);
-    }
-  } else {
-    for (var i = 0; i < 7; i++) {
-      movieDesc = formatCoverIndex(list[i]);
-      futureInner = futureInner.concat(" ", movieDesc);
-    }
-  }
-  block.innerHTML = futureInner;
-}
-
-
-/* PAGE INTERACTIONS */
-function onLoading() {//Loads the page, including the 70 first movies of each list
-  Promise.all([getTopMovie(), getMovies(URL_BEST, 0), getMovies(URL_NEWISH, 0),
-              getMovies(URL_OLDIES, 0), getMovies(URL_WORST, 0)])
-  .then(([result1, result2, result3, result4, result5]) => {
-    showTopMovie(result1);
-    displayMovies(result2, "best-rated");
-    displayMovies(result3, "newish");
-    displayMovies(result4, "oldies");
-    displayMovies(result5, "worst");
-    dataArrays = {"best-rated": result2,
-                  "newish": result3,
-                  "oldies": result4,
-                  "worst": result5};
-    var arrows = document.getElementsByClassName("arrow");
-    for (var arrow of arrows) {
-      arrow.style.display = "block";
-    };
-
-    /* Saves the current API page, and the index of the last loaded movie */
-    Promise.all([pageCount(TITLE_URL), pageCount(URL_NEWISH), pageCount(URL_OLDIES),
-                pageCount(URL_WORST)])
-    .then(([result1, result2, result3, result4]) => {
-      ocMoviePositionTracking = {"best-rated-pos": [14, 6],
-                      "newish-pos": [14, 6],
-                      "oldies-pos": [14, 6],
-                      "worst-pos": [14, 6],
-                      "best-rated-count": result1,
-                      "newish-count": result2,
-                      "oldies-count": result3,
-                      "worst-count": result4};
-    },
-    (error) => {
-      ifError(error);
-    }
-  );
-  },
-  (error) => {
-    ifError(error);
-  }
-  );
-}
-
 function previousPage(buttonId) {//Loads previous page
   var lastLoadedIndex = ocMoviePositionTracking[`${buttonId}-pos`][1];
 
@@ -287,51 +337,5 @@ function previousPage(buttonId) {//Loads previous page
   }
 }
 
-function loadList(list, movieIndex) {//Loads a list for nextPage
-  var result = [];
-  var start = movieIndex += 1;
-  for (var i = 0; i < 7; i++) {
-    result.push(dataArrays[list][start]);
-    start++;
-  }
-  return result;
-}
-
-function nextPage(buttonId, url) {
-  var totalPages = ocMoviePositionTracking[`${buttonId}-count`];
-  var lastAPIPage = ocMoviePositionTracking[`${buttonId}-pos`][0];
-  var lastLoadedIndex = ocMoviePositionTracking[`${buttonId}-pos`][1];
-  var listLength = dataArrays[buttonId].length;
-  var toLoad = [];
-
-  if (lastAPIPage == totalPages) {// If we reached the end, does nothing
-    return 0;
-  } else {// Loads the next movies in the global
-    toLoad = loadList(buttonId, lastLoadedIndex);
-    displayMovies(toLoad, buttonId);
-
-    if (lastLoadedIndex > (listLength -= 10))
-    {//Loads new movies if we're nearing the end of the loaded list
-      Promise.all([getMovies(url, lastAPIPage)])
-      .then(([result1]) => {
-        dataArrays[buttonId] = dataArrays[buttonId].concat(result1);
-
-        /* Updates the new list values. Should we decide to use a number other
-        than 70 per batch of loaded movies, we'll have to use Math.floor
-        and adjust page count. */
-        var newListLength = dataArrays[buttonId].length;
-        var newAPIPage = newListLength /= 5;
-        ocMoviePositionTracking[`${buttonId}-pos`][0] = newAPIPage;
-      },
-      (error) => {
-        ifError(error);
-      }
-    );
-    }
-  }
-
-//Updates the last loaded movie index
-  ocMoviePositionTracking[`${buttonId}-pos`][1] = lastLoadedIndex + toLoad.length;
-}
 
 onLoading();
