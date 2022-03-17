@@ -11,7 +11,7 @@ of the last displayed movie in the corresponding dataArrays list */
 let ocMoviePositionTracking = {};
 
 
-function formatIndex(movie) {// Formats movie covers for display on the index
+function formatMovieCover(movie) {// Formats movie covers for display on the index
   var title = movie["title"];
   var cover = movie["image_url"];
   var idMovie = movie["id"];
@@ -63,7 +63,7 @@ function formatModal(cover, title, genres, year, rated, imdb_score, directors,
               countries: countries,
               boxOffice: boxOffice,
               };
-  var template =  document.getElementById('temp-modal').innerHTML;
+  var template =  document.getElementById('moustache-modal').innerHTML;
   var result = Mustache.render(template, data);
   return result;
 }
@@ -119,7 +119,8 @@ async function openModal(path) {
       var innerModal = document.getElementById('modal-content');
       var closebtn = document.getElementsByClassName("close")[0];
       innerModal.innerHTML = formatModal(...listInfo);
-      modal.style.display = "block"; //opens the modal
+      modal.style.display = "flex"; //opens the modal
+      window.scrollTo(0, 0);
       closebtn.onclick = function() {// close the modal upon clicking the button
         modal.style.display = "none";
       }
@@ -130,6 +131,7 @@ async function openModal(path) {
   );
 }
 
+/* API-related functions */
 async function getTopMovie() {//Gets the best movie
   var movie = ""
     await axios.get(URL_BEST).then(
@@ -154,10 +156,11 @@ async function showTopMovie(movieId) {//Show the best movie
                   url: `${TITLE_URL}${movie["id"]}`,
                   description: movie["description"]
                 };
-      var template = document.getElementById('temp-best').innerHTML;
+      var template = document.getElementById('moustache-best').innerHTML;
+      var toFormat = document.getElementById('best-desc');
       var formatted = Mustache.render(template, data);
-      var formattedBloc = document.getElementById('top-movie');
-      formattedBloc.innerHTML = formatted;
+
+      toFormat.innerHTML = formatted;
     },
     (error) => {
       ifError(error);
@@ -203,12 +206,12 @@ function showMovies(list, div) {//Displays movies to the user
 
   if (l < 7) {
     for (var i = 0; i < l; i++) {
-      movieDesc = formatIndex(list[i]);
+      movieDesc = formatMovieCover(list[i]);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   } else {
     for (var i = 0; i < 7; i++) {
-      movieDesc = formatIndex(list[i]);
+      movieDesc = formatMovieCover(list[i]);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   }
@@ -228,6 +231,10 @@ function onLoading() {//Loads the page, including the 70 first movies of each li
                   "newish": result3,
                   "oldies": result4,
                   "worst": result5};
+    var arrows = document.getElementsByClassName("arrow");
+    for (var arrow of arrows) {
+      arrow.style.display = "block";
+    };
 
     /* We save the current API page, and the index of the last loaded movie
     which is in the dataArrays list *///
@@ -249,11 +256,9 @@ function onLoading() {//Loads the page, including the 70 first movies of each li
   );
   },
   (error) => {
-  //NOTE : Peut-on gérer une erreur pour chaque catégorie sans avoir à C/C ?
     ifError(error);
   }
   );
-
 }
 
 function previousPage(buttonId) {//Load previous page
@@ -291,7 +296,6 @@ function nextPage(buttonId, url) {
     toLoad = loadList(buttonId, lastLoadedIndex);
     showMovies(toLoad, buttonId);
 
-//    if (lastLoadedIndex > (listLength -= 54) && lastLoadedIndex < (listLength -= 10))
     if (lastLoadedIndex > (listLength -= 10))
     {//Loads new movies if we're nearing the end of the loaded list
       Promise.all([getMovies(url, lastAPIPage)])

@@ -6,7 +6,7 @@
   <title>JustStreamIt</title>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://unpkg.com/mustache@latest"></script>
-  <link rel="stylesheet" href="index.css"/>
+  <link rel="stylesheet" href="site.css"/>
 </head>
 
 <body>
@@ -33,11 +33,11 @@
   </div>
 
   <section class="best-movie-section">
-    <h2 id="title-top">Meilleur film</h2>
-    <div id="top-movie">
+    <h2 id="title-best">Meilleur film</h2>
+    <div id="best-desc">
       <p>En cours de chargement...</p>
     </div>
-    <script id="temp-best" type="x-tmpl-mustache">
+    <script id="moustache-best" type="x-tmpl-mustache">
       <div>
         <h3>{{ title }}</h3>
         <p>
@@ -47,6 +47,7 @@
           {{ description }}
         </p>
       </div>
+
       <div>
         <p>
           <input type="image" class="cover-index" src="{{ cover }}" alt="{{ title }} - Cliquez pour en savoir plus !" id="{{ idMovie }}" onclick="openModal('{{ url }}')"/>
@@ -117,24 +118,24 @@
   <div id="myModal" class="modal">
     <!-- Modal content -->
       <span class="close">&times;</span>
-      <div id="modal-content">En cours de chargement...</div>
-      <script id="temp-modal" type="x-tmpl-mustache">
+      <div id="modal-content"><p>En cours de chargement...</p></div>
+      <script id="moustache-modal" type="x-tmpl-mustache">
         <h2 class='mod-title'>{{ title }}</h2>
         <div id="mod-data">
           <p>
             <img class="mod-cover" img src="{{cover}}" alt="Poster de {{title}}"/>
           </p>
           <p>
-            <b>Genres : </b>{{ genres }}<br>
-            <b>Résumé : </b> {{ summary }}<br>
-            <b>Année : </b>{{ year }}<br>
-            <b>Score : </b>{{ rated }}<br>
-            <b>Score Imdb : </b>{{ imdb }}<br>
-            <b>Réalisateur(s) : </b>{{ directors }}<br>
-            <b>Acteurs : </b>{{ actors }}<br>
-            <b>Durée : </b>{{ duration }}<br>
-            <b>Pays d'origine : </b>{{ countries }}<br>
-            <b>Box-office : </b>{{ boxOffice }}<br>
+            <b>Genres :</b> {{ genres }}<br>
+            <b>Résumé :</b> {{ summary }}<br>
+            <b>Année :</b> {{ year }}<br>
+            <b>Score :</b> {{ rated }}<br>
+            <b>Score Imdb :</b> {{ imdb }}<br>
+            <b>Réalisateur(s) :</b> {{ directors }}<br>
+            <b>Acteurs :</b> {{ actors }}<br>
+            <b>Durée :</b> {{ duration }}<br>
+            <b>Pays d'origine :</b> {{ countries }}<br>
+            <b>Box-office :</b> {{ boxOffice }}<br>
           </p>
         </div>
       </script>
