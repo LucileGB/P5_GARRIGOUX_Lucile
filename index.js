@@ -11,7 +11,7 @@ of the last displayed movie in the corresponding dataArrays list */
 let ocMoviePositionTracking = {};
 
 
-function formatIndex(movie) {// Formats movie cover for display on the index
+function formatIndex(movie) {// Formats movie covers for display on the index
   var title = movie["title"];
   var cover = movie["image_url"];
   var idMovie = movie["id"];
@@ -19,10 +19,15 @@ function formatIndex(movie) {// Formats movie cover for display on the index
   return result;
 }
 
-function ifError(error) {//Shows a warning in case of errors
+function ifError(error) {//Shows an error message and hides the rest of the page
   var errorHead = document.getElementsByClassName("if-error")[0];
+  var movieList = document.getElementsByClassName("movies-lists")[0];
+  var bestMovie = document.getElementsByClassName("best-movie-section")[0];
+
   errorHead.style.display = "block";
   errorHead.innerHTML = `Désolés, mais nous avons rencontré l'erreur suivante :<br> ${error}`;
+  movieList.style.display = "none";
+  bestMovie.style.display = "none";
 }
 
 function prettyList(list) {//Formats a list with a space after commas

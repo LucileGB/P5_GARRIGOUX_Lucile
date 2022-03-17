@@ -32,65 +32,86 @@
     <p>In case of error.</p>
   </div>
 
-    <section>
-      <h2 id="title-top">Meilleur film</h2>
-      <div id="top-movie">
-        <p>En cours de chargement...</p>
+  <section class="best-movie-section">
+    <h2 id="title-top">Meilleur film</h2>
+    <div id="top-movie">
+      <p>En cours de chargement...</p>
+    </div>
+    <script id="temp-best" type="x-tmpl-mustache">
+      <div>
+        <h3>{{ title }}</h3>
+        <p>
+          <input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer {{ title }}!" id="btn-play"/>
+        </p>
+        <p>
+          {{ description }}
+        </p>
       </div>
-      <script id="temp-best" type="x-tmpl-mustache">
-        <div>
-          <h3>{{ title }}</h3>
-          <p>
-            <input type="image" src="img/btn_play.png" alt="Cliquez ici pour streamer {{ title }}!" id="btn-play"/>
-          </p>
-          <p>
-            {{ description }}
-          </p>
-        </div>
-        <div>
-          <p>
-            <input type="image" class="cover-index" src="{{ cover }}" alt="{{ title }} - Cliquez pour en savoir plus !" id="{{ idMovie }}" onclick="openModal('{{ url }}')"/>
-          </p>
-        </div>
-      </script>
-    </section>
+      <div>
+        <p>
+          <input type="image" class="cover-index" src="{{ cover }}" alt="{{ title }} - Cliquez pour en savoir plus !" id="{{ idMovie }}" onclick="openModal('{{ url }}')"/>
+        </p>
+      </div>
+    </script>
+  </section>
 
-  <section class="other-movies">
-      <h2>Films les mieux notés</h2>
-    <section>
+  <section class="movies-lists">
+    <div class="h2-list">
+      <h2>Les mieux notés</h2>
+    </div>
+
+    <section class="section-list">
       <button class="arrow" onclick="previousPage('best-rated')">←</button>
+
       <div id="best-rated">
         <p>En cours de chargement...</p>
       </div>
+
       <button class="arrow" onclick="nextPage('best-rated', URL_BEST)">→</button>
     </section>
 
-      <h2>Les films les mieux notés de ces vingt dernières années</h2>
-      <section>
-        <button class="arrow" onclick="previousPage('newish')">←</button>
+    <div class="h2-list">
+      <h2>Les mieux notés : 2000-2021</h2>
+    </div>
+
+    <section class="section-list">
+      <button class="arrow" onclick="previousPage('newish')">←</button>
+
         <div id="newish">
           <p>En cours de chargement...</p>
         </div>
+
       <button class="arrow" onclick="nextPage('newish', URL_NEWISH)">→</button>
     </section>
 
-      <h2>Les films du XXème siècle les mieux notés</h2>
-      <section>
-        <button class="arrow" onclick="previousPage('oldies')">←</button>
+    <div class="h2-list">
+      <h2>Les mieux notés jusqu'à 1999</h2>
+    </div>
+
+    <section class="section-list">
+      <button class="arrow" onclick="previousPage('oldies')">←</button>
+
         <div id="oldies">
           <p>En cours de chargement...</p>
         </div>
-        <button class="arrow" onclick="nextPage('oldies', URL_OLDIES)">→</button>
-      </section>
 
-      <h2>Les films les moins bien notés</h2>
-      <section>
-        <button class="arrow" onclick="previousPage('worst')">←</button>
+      <button class="arrow" onclick="nextPage('oldies', URL_OLDIES)">→</button>
+    </section>
+
+      <div class="h2-list">
+        <h2>Les moins bien notés</h2>
+      </div>
+
+    <section class="section-list">
+      <button class="arrow" onclick="previousPage('worst')">←</button>
+
         <div id="worst">
           <p>En cours de chargement...</p>
         </div>
-        <button class="arrow" onclick="nextPage('worst', URL_WORST)">→</button>
-      </section>
+
+      <button class="arrow" onclick="nextPage('worst', URL_WORST)">→</button>
+    </section>
+
   </section>
 
   <div id="myModal" class="modal">
