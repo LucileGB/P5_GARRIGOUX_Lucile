@@ -60,7 +60,7 @@ function formatCoverIndex(movie) {// Formats movie covers for display on the ind
 }
 
 
-function loadList(list, movieIndex) {//Loads a list for nextPage
+function loadList(list, movieIndex) {//Loads a list of stored movies
   var result = [];
   var start = movieIndex += 1;
   for (var i = 0; i < 7; i++) {
@@ -94,8 +94,8 @@ function displayMovies(list, div) {//Displays movies to the user
   var block = document.getElementById(div);
 
   if (length < 7) {
-    for (var i = 0; i < length; i++) {
-      movieDesc = formatCoverIndex(list[i]);
+    for (item of list) {
+      movieDesc = formatCoverIndex(item);
       futureInner = futureInner.concat(" ", movieDesc);
     }
   } else {
@@ -132,11 +132,12 @@ async function displayBest(movieId) {//Show the best movie
 }
 
 
-async function getMovies(path, page) {// Loads movies.
+async function getMovies(path, page) {// Loads movies from the API.
   var listMovies = [];
   var listResults = "";
   var startPage = page;
-  for (var i = 0; i < 14; i++) {
+
+  for (var i = 0; i < 14; i++) {// Keep loading for 14 pages (total: 70 movies)
     startPage ++;
     var currentpath = `${path}&page=${startPage}`;
     await axios.get(currentpath).then(
@@ -148,15 +149,16 @@ async function getMovies(path, page) {// Loads movies.
             ifError(error);
                 }
     );
+
     for (var j = 0; j < 5; j++){//Loads all the movies inside a page
       if (listResults[j] == undefined) {
         //... While avoiding movies already loaded, if starting mid-page
         continue;
       } else {
-      listMovies.push({'title': listResults[j]["title"],
-                      'image_url': listResults[j]["image_url"],
-                    'id': listResults[j]["id"]}
-                  );
+          listMovies.push({'title': listResults[j]["title"],
+                          'image_url': listResults[j]["image_url"],
+                        'id': listResults[j]["id"]}
+                      );
       }
     }
   }
@@ -166,7 +168,7 @@ async function getMovies(path, page) {// Loads movies.
 
 async function getTopMovie() {//Gets the best movie
   var movie = ""
-    await axios.get(URL_BEST).then(
+  await axios.get(URL_BEST).then(
       (response) => {
         var result = response.data;
         movie = result["results"][0]["id"];
@@ -175,7 +177,7 @@ async function getTopMovie() {//Gets the best movie
         ifError(error);
       }
     );
-    return movie;
+  return movie;
 }
 
 
@@ -201,16 +203,16 @@ function nextPage(buttonId, url) {
   var lastAPIPage = ocMoviePositionTracking[`${buttonId}-pos`][0];
   var lastLoadedIndex = ocMoviePositionTracking[`${buttonId}-pos`][1];
   var listLength = dataArrays[buttonId].length;
-  var toLoad = [];
+  var movies = [];
 
   if (lastAPIPage == totalPages) {// If we reached the end, does nothing
     return 0;
   } else {// Loads the next movies in the global
-    toLoad = loadList(buttonId, lastLoadedIndex);
-    displayMovies(toLoad, buttonId);
+    movies = loadList(buttonId, lastLoadedIndex);
+    displayMovies(movies, buttonId);
 
-    if (lastLoadedIndex > (listLength -= 10))
-    {//Loads new movies if we're nearing the end of the loaded list
+    if (lastLoadedIndex > (listLength -= 10)) {
+      //Loads new movies if we're nearing the end of the loaded list
       Promise.all([getMovies(url, lastAPIPage)])
       .then(([result1]) => {
         dataArrays[buttonId] = dataArrays[buttonId].concat(result1);
@@ -229,7 +231,7 @@ function nextPage(buttonId, url) {
     }
   }
 //Updates the last loaded movie index
-  ocMoviePositionTracking[`${buttonId}-pos`][1] = lastLoadedIndex + toLoad.length;
+  ocMoviePositionTracking[`${buttonId}-pos`][1] = lastLoadedIndex + movies.length;
 }
 
 
