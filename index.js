@@ -40,7 +40,7 @@ function formatModal(cover, title, genres, year, rated, imdb_score, directors,
               countries: countries,
               boxOffice: boxOffice,
               };
-  var template =  document.getElementById('moustache-modal').innerHTML;
+  var template =  document.getElementById('mustache-modal').innerHTML;
   var result = Mustache.render(template, data);
   return result;
 }
@@ -119,7 +119,7 @@ async function displayBest(movieId) {//Show the best movie
                   url: `${TITLE_URL}${movie["id"]}`,
                   description: movie["description"]
                 };
-      var template = document.getElementById('moustache-best').innerHTML;
+      var template = document.getElementById('mustache-best').innerHTML;
       var toFormat = document.getElementById('best-desc');
       var formatted = Mustache.render(template, data);
 
