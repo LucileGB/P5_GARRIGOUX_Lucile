@@ -4,11 +4,11 @@
 ## About
 JustStreamIt is a website using the [OCMovies API](https://github.com/OpenClassrooms-Student-Center/OCMovies-API-EN-FR). Instructions were to keep to vanilla CSS and Javascript except for the Axios library, and with allowances for use of the [Mustache template system.](https://github.com/janl/mustache.js)
 
-Using the API's database, JustStreamIt shows the best rated movie in its selection and displays four sorted lists:
+Using the API's database, JustStreamIt shows the best-rated movie in its selection and displays four sorted lists:
 -  All movies, sorted by rating (from best to worst);
--  The best rated movies between 2000 and 2021;
--  The best rated movies from before the 2000's;
--  The worst rated movies across all years and genres.
+-  The best-rated movies between 2000 and 2021;
+-  The best-rated movies from before the 2000's;
+-  The worst-rated movies across all years and genres.
 
 You can navigate through these selections using the arrows on each side of the list. To see more details about a movie, just click on its cover.
 
